@@ -1,11 +1,11 @@
 
 ---
 hero:
-  title: react-create-dm
+  title: ReactCreateDM
   desc: 使用函数优雅地创建弹框抽屉
   actions:
     - text: 快速上手
-      link: /guide/modal
+      link: /guide
 features:
   - icon: https://gw.alipayobjects.com/zos/bmw-prod/881dc458-f20b-407b-947a-95104b5ec82b/k79dm8ih_w144_h144.png
     title: 函数式编程

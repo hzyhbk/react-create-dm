@@ -1,8 +1,9 @@
-import { defineConfig } from 'dumi';
-
-export default defineConfig({
+export default {
   mode: 'site',
-  title: 'react-create-dm',
+  title: 'ReactCreateDM',
+  base: '/react-create-dm',
+  publicPath: '/react-create-dm/',
+  exportStatic: {},
   description: '使用函数优雅地创建弹框抽屉',
   favicon:
     'https://user-images.githubusercontent.com/9554297/83762004-a0761b00-a6a9-11ea-83b4-9c8ff721d4b8.png',
@@ -34,4 +35,4 @@ export default defineConfig({
   ],
 
   // more config: https://d.umijs.org/config
-});
+};
