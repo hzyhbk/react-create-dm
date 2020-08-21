@@ -8,8 +8,8 @@
 import { ModalProps } from 'antd/lib/modal';
 
 type ICreateProps = {
-  onOk?: (...args: any[]) => any; // 点击确定按钮是触发的回调
-  onCancel?: (...args: any[]) => any; // 点击取消按钮是触发的回调
+  onOk?: (...args: any[]) => any; // 点击确定按钮时触发的回调
+  onCancel?: (...args: any[]) => any; // 点击取消按钮时触发的回调
   content?: React.ReactNode;
 };
 
