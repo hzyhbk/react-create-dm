@@ -1,12 +1,19 @@
 import React, { Component } from 'react';
 import Modal, { ModalProps } from 'antd/lib/modal';
 import Drawer, { DrawerProps } from 'antd/lib/drawer';
+import ConfigProvider from 'antd/lib/config-provider';
+import zhCN from 'antd/es/locale/zh_CN';
+import { hot } from 'react-hot-loader/root';
 import 'antd/lib/modal/style/index.less';
 import 'antd/lib/drawer/style/index.less';
 import 'antd/lib/button/style/index.less';
 import 'antd/lib/style/index.less';
 const omit = require('lodash/omit');
 const ReactDOM = require('react-dom');
+
+let GlobalProvider: React.FC = ({ children }) => (
+  <ConfigProvider locale={zhCN}>{children}</ConfigProvider>
+);
 
 type IBaseCreateOption = {
   component: React.ComponentType<any>;
@@ -17,8 +24,14 @@ type IBaseCreateOption = {
 };
 type IBaseDMProps = IBaseCreateOption & {
   onOk?: (...args: any[]) => any;
+  onCancel?: (...args: any[]) => any;
   close: (...args: any[]) => void;
   content?: React.ReactNode | string;
+};
+type ICreateProps = {
+  onOk?: (...args: any[]) => any;
+  onCancel?: (...args: any[]) => any;
+  content?: React.ReactNode;
 };
 
 const SHOULD_OMIT_PROPS = [
@@ -40,6 +53,7 @@ export class BaseDM extends Component<
   onCancelCallbackRef = React.createRef() as React.MutableRefObject<() => void>;
   state = {
     confirmLoading: false,
+    Provider: GlobalProvider,
   };
   renderContent = () => {
     const content = this.props.content as any;
@@ -76,15 +90,29 @@ export class BaseDM extends Component<
       confirmLoading: this.state.confirmLoading,
     });
   };
-  onCancel = () => {
-    const close = this.props.close;
+  onCancel = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const cpt = this.contentRef.current;
+    const { title, footer } = this.props as any;
+    let close = this.props.close;
+
     let onDMClose = null;
     if (this.onCancelCallbackRef.current) {
       onDMClose = this.onCancelCallbackRef.current;
-    } else if (this.contentRef.current && this.contentRef.current.onDMClose) {
-      onDMClose = this.contentRef.current.onDMClose;
+    } else if (cpt && cpt.onDMClose) {
+      onDMClose = cpt.onDMClose;
     }
 
+    // 如果没有自定义title组件和footer组件
+    // 并且 currentTarget.className 是 ant-btn
+    // 说明点了组件自带的取消按钮
+    if (
+      !React.isValidElement(title) &&
+      !React.isValidElement(footer) &&
+      e.currentTarget.className === 'ant-btn'
+    ) {
+      // 触发节点是按钮
+      close = this.props.close.bind(this, { triggerCancel: true });
+    }
     if (onDMClose) {
       onDMClose(close);
     } else {
@@ -160,28 +188,45 @@ export class BaseDM extends Component<
       newProps.footer = this.renderCustomeNode(newProps.footer);
     }
     const content = this.renderContent();
-    return React.createElement(component, newProps, content);
+    return React.createElement(
+      this.state.Provider,
+      {},
+      React.createElement(component, newProps, content),
+    );
   }
 }
+const HotBaseDM = hot(BaseDM);
 
 export function baseCreate<T>(options: IBaseCreateOption) {
   const { destoryCbName } = options;
-  return (modalProps: T) => {
+  return (
+    modalProps: Omit<
+      T,
+      'onOk' | 'onCancel' | 'onCancel' | 'afterVisibleChange'
+    > &
+      ICreateProps,
+  ) => {
     const divEl = document.createElement('div');
 
     function render(props: any) {
-      ReactDOM.render(<BaseDM {...props} />, divEl);
+      ReactDOM.render(<HotBaseDM {...props} />, divEl);
     }
-    function destroy() {
+    function destroy(...args: any[]) {
       ReactDOM.unmountComponentAtNode(divEl);
+
+      const triggerCancel =
+        args && args.length && args.some(param => param && param.triggerCancel);
+      if (modalProps.onCancel && triggerCancel) {
+        modalProps.onCancel(...args);
+      }
     }
-    function close() {
+    function close(this: any, ...args: any[]) {
       render({
         ...modalProps,
         ...options,
         visible: false,
         close,
-        [destoryCbName]: destroy,
+        [destoryCbName]: destroy.bind(this, ...args),
       });
     }
     function open() {
@@ -194,7 +239,14 @@ export function baseCreate<T>(options: IBaseCreateOption) {
     }
 
     open();
+
+    return {
+      destroy: close,
+    };
   };
+}
+export function setModalProvider(provider: React.FC) {
+  GlobalProvider = provider;
 }
 
 export const createAntdModal = baseCreate<ModalProps>({

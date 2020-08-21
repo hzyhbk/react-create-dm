@@ -32,7 +32,8 @@
     ]
   },
   "dependencies": {
-    "react": "^16.12.0"
+    "react": "^16.12.0",
+    "react-hot-loader": "^4.12.21"
   },
   "devDependencies": {
     "@umijs/preset-react": "1.x",

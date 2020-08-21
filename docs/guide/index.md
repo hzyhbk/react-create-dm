@@ -7,7 +7,7 @@ nav:
 
 ## 介绍
 
-使用函数优雅地创建 [ant-design](https://ant.design/docs/react/introduce-cn) 的 Drawer 和 Modal。它是 <a target="_blank" href="https://hzyhbk.github.io/vue-create-dm/">vue-create-dm</a> 的兄弟库。
+使用函数优雅地创建 [ant-design](https://ant.design/docs/react/introduce-cn) 的 Drawer 和 Modal。它是 <a target="_blank" href="https://hzyhbk.github.io/vue-create-dm/">VueCreateDM</a> 的兄弟库。
 
 
 ## 安装

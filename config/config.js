@@ -29,7 +29,7 @@ export default {
       path: 'https://github.com/hzyhbk/react-create-dm',
     },
     {
-      title: 'vue-create-dm',
+      title: 'VueCreateDM',
       path: 'https://hzyhbk.github.io/vue-create-dm/',
     },
   ],

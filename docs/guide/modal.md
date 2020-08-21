@@ -3,6 +3,31 @@
 
 通过函数打开 Antd 的 Modal
 
+## 类型签名
+```ts
+import { ModalProps } from 'antd/lib/modal';
+
+type ICreateProps = {
+  onOk?: (...args: any[]) => any; // 点击确定按钮是触发的回调
+  onCancel?: (...args: any[]) => any; // 点击取消按钮是触发的回调
+  content?: React.ReactNode;
+};
+
+type ICreateModalProps = Omit<ModalProps,'onOk' | 'onCancel' | 'onCancel' | 'afterVisibleChange'> & ICreateProps;
+
+type createAntdModal = (options: ICreateModalProps) => ({ destroy: () => void });
+```
+<Alert>
+提示：
+
+`createAntdModal({})` 返回一个包含了 `destroy` 属性的对象，这样你就可以手动调用返回值关闭 Modal。
+
+```js
+const { destroy } = createAntdModal({ ... })
+destroy(); // 手动销毁弹窗
+```
+</Alert>
+
 ## 基础示例
 
 ```tsx
@@ -22,7 +47,7 @@ class Content extends React.Component {
     console.log('componentWillUnmount');
   }
   render() {
-    return <div>最简单的用法</div>;
+    return <div>最简单的用法hhhh</div>;
   }
 }
 
@@ -31,6 +56,9 @@ export default () => {
     createAntdModal({
       title: '基础示例',
       content: <Content />,
+      onCancel: () => {
+        console.log(123123)
+      }
     });
   };
   return (
@@ -78,6 +106,9 @@ const createModal = () => {
     onOk: result => {
       alert(result);
     },
+    onCancel: function(){
+      console.log('取消取消取消取消取消取消')
+    }
   });
 };
 export default () => (

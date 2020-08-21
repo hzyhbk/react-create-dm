@@ -3,6 +3,31 @@
 
 通过函数打开 Antd 的 Drawer
 
+## 类型签名
+```ts
+import { DrawerProps } from 'antd/lib/drawer';
+
+type ICreateProps = {
+  onOk?: (...args: any[]) => any; // 点击确定按钮是触发的回调
+  onCancel?: (...args: any[]) => any; // 点击取消按钮是触发的回调
+  content?: React.ReactNode;
+};
+
+type ICreateDrawerProps = Omit<DrawerProps,'onOk' | 'onCancel' | 'onCancel' | 'afterVisibleChange'> & ICreateProps;
+
+type createAntdDrawer = (options: ICreateDrawerProps) => ({ destroy: () => void });
+```
+<Alert>
+提示：
+
+`createAntdDrawer({})` 返回一个包含了 `destroy` 属性的对象，这样你就可以手动调用返回值关闭 Drawer。
+
+```js
+const { destroy } = createAntdDrawer({ ... })
+destroy(); // 手动销毁抽屉
+```
+</Alert>
+
 ## 基础示例
 
 ```tsx
