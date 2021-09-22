@@ -125,9 +125,9 @@ export class BaseDM extends Component<
       this.props.close();
     } else {
       try {
-        const res2 = this.props.onOk(data);
+        let res2 = this.props.onOk(data);
         if (res2 && res2.then) {
-          await res2;
+          res2 = await res2;
         }
         this.setState({ confirmLoading: false });
         // 如果返回 false 就阻止关闭
